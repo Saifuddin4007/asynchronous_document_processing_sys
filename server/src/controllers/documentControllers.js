@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import pool from '../db/pool.js';
 import { error } from 'console';
+import {documentQueue} from '../queue/documentQueue.js';
 
 
 export const checkHealth = async (req,res) =>{
@@ -17,6 +18,8 @@ export const checkHealth = async (req,res) =>{
 }
 
 export const uploadDocument= async (req,res) =>{
+    let docId;
+
     try{
         if(!req.file){
             return res.status(404).json({Error: 'file Not found'});
@@ -24,16 +27,59 @@ export const uploadDocument= async (req,res) =>{
 
         const {originalname, filename, path: fileUrl, mimetype, size }= req.file;
 
-        //!Insert document record intopostgresql
+        //!Insert document record into postgresql
         const {rows}= await pool.query(
             `INSERT INTO documents(original_filename, stored_filename, mime_type, file_size, status )
             VALUES ($1, $2, $3, $4, 'pending')
             RETURNING *`,
             [originalname, filename, mimetype, size ]
         );
-        res.status(201).json({message: 'Document uploaded successfully', document: rows[0] });
+
+        docId= rows[0].document_id;
+
+        //!Add document to Queue
+
+        //*Add job to BullMQ
+        const job= await documentQueue.add(
+            'process-document',
+            {
+                document_id: docId,
+                original_filename: originalname,
+                stored_filename: filename,
+                mime_type: mimetype
+            },
+            {
+                priority: 1,
+                delay: 0,
+            }
+        );
+
+        const result= await pool.query(
+            `UPDATE documents
+            SET status= 'queued'
+            WHERE document_id= $1
+            RETURNING *`,
+            [docId]
+        );
+
+
+        res.status(201).json({
+            message: 'Document uploaded successfully and document queued for processing',
+            document: result.rows[0],
+            jobId: job.id,
+            docId
+        });
 
     }catch(err){
+        if(docId){
+            await pool.query(
+            `UPDATE documents
+            SET status= 'queue_failed' 
+            WHERE document_id= $1`,
+            [docId]
+        );
+        }
+
         res.status(500).json({error:err.message});
     }
 };
