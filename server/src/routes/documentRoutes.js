@@ -1,6 +1,6 @@
 import express from 'express';
 import {upload} from '../middlewares/upload.js';
-import { checkHealth, uploadDocument } from '../controllers/documentControllers.js';
+import { checkHealth, deleteOneDocument, getAllDocuments, getSingleDocument, uploadDocument } from '../controllers/documentControllers.js';
 
 const router= express.Router();
 
