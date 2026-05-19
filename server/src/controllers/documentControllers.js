@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import pool from '../db/pool.js';
-import { error } from 'console';
 import {documentQueue} from '../queue/documentQueue.js';
 
 
@@ -37,6 +36,14 @@ export const uploadDocument= async (req,res) =>{
 
         docId= rows[0].document_id;
 
+        //!Add job's execution into jobs table
+        const jobsTable= await pool.query(
+            `INSERT INTO jobs(status, progress_percent, attempt_number, document_id)
+            VALUES('queued', $1, $2, $3)
+            RETURNING *`,
+            [0, 0, docId]
+        );
+
         //!Add document to Queue
 
         //*Add job to BullMQ
@@ -61,7 +68,6 @@ export const uploadDocument= async (req,res) =>{
             RETURNING *`,
             [docId]
         );
-
 
         res.status(201).json({
             message: 'Document uploaded successfully and document queued for processing',
@@ -142,8 +148,6 @@ export const deleteOneDocument= async(req,res) =>{
         if(!result.rows[0]){
             return res.status(404).json({error: 'document not found'});
         }
-
-        await fileDelete(result.rows[0].stored_filename);
         
 
         const resultDeletedData = await pool.query(
@@ -154,6 +158,12 @@ export const deleteOneDocument= async(req,res) =>{
         );
         if(resultDeletedData.rowCount===0){
             return res.status(404).json({message:'Document not found'});
+        }
+
+        try{
+            await fileDelete(result.rows[0].stored_filename);
+        }catch(err){
+            console.log('Physical file cleanp failed', err.message);
         }
 
         res.status(200).json({message:'Document deleted'});
