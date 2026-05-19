@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import pool from './src/db/pool.js';
 import {errorHandler} from '../server/src/middlewares/errorHandler.js';
 import documentRoutes from './src/routes/documentRoutes.js';
+import jobRoutes from './src/routes/jobRoutes.js';
+import resultRoutes from './src/routes/resultRoutes.js';
 const app= express();
 
 
@@ -27,8 +29,8 @@ app.use(cors({
 
 //!Routes
 app.use('/api/v1', documentRoutes);
-// app.use('/api/v1', jobRoutes);
-// app.use('/api/v1', resultRoutes);
+app.use('/api/v1', jobRoutes);
+app.use('/api/v1', resultRoutes);
 // app.use('/api/v1', exportRoutes);
 
 
