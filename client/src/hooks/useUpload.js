@@ -2,7 +2,7 @@ import { useState } from "react"
 import { uploadDocument } from "../services/api";
 
 
-const useUpload = () => {
+const useUpload = (onUploadComplete) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [upload, setUpload] = useState(false);
     const [error, setError] = useState(null);
@@ -39,6 +39,8 @@ const useUpload = () => {
         setJobId(res.jobId);
 
         setUpload(false);
+
+        onUploadComplete(res.document_id);
 
        }catch(err){
         setError(err.message);
