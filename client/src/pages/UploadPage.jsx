@@ -3,8 +3,8 @@ import UploadZone from "../components/UploadZone";
 import useUpload from "../hooks/useUpload";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
-const UploadPage = () => {
-    const {selectedFile, handleFileSelect, handleUpload, handleRemoveFile, upload, error} = useUpload();
+const UploadPage = ({onUploadComplete}) => {
+    const {selectedFile, handleFileSelect, handleUpload, handleRemoveFile, upload, error} = useUpload(onUploadComplete);
 
   return (
     <>
