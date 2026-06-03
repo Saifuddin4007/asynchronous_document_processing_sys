@@ -30,3 +30,13 @@ export const saveReviewedData= async (docId, reviewedData, isFinalized=false)=>{
     });
     return res.data;
 }
+
+
+export const exportData= async (documentId, format)=>{
+    const res= await api.get(`/api/v1/export/${documentId}?format=${format}`,
+        {
+            responseType: 'blob'
+        }
+    );
+    return res.data;
+}
