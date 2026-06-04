@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: doc_processor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data          # named volume
+      - ./postgres/init:/docker-entrypoint-initdb.d     # bind mount (for init SQL)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - doc-network
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: doc_processor_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379" 
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - doc-network
+      
+
+volumes:                # ← top-level heading
+  postgres_data:        # ← Docker manages this volume automatically
+
+
+networks:
+  doc-network:
+    driver: bridge
