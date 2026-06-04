@@ -10,21 +10,65 @@ const ResultPage = ({
 
   const handleExport= async (format= "json")=>{
     try{
-      const res= await exportData(documentId, format);
-      const url= window.URL.createObjectURL(res);
-      const link= document.createElement('a');
-      link.href= url;
+      const res = await exportData(documentId, format);
 
-      link.setAttribute(
-        "download",
-        `document-export.${format=== "json" ? "json" : "txt"}`
-      );
+      const blob = new Blob([res.data]);
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+
+      link.href = url;
+
+
+      // read backend filename
+      const contentDisposition = res.headers['content-disposition'];
+
+      let filename = `export.${format}`;
+
+      if (contentDisposition) {
+
+        const match = contentDisposition.match(/filename="(.+)"/);
+
+        if (match && match[1]) {
+          filename = match[1];
+        }
+      }
+
+      link.setAttribute('download', filename);
 
       document.body.appendChild(link);
+
       link.click();
+
       link.remove();
 
       window.URL.revokeObjectURL(url);
+      // const res= await exportData(documentId, format);
+      // const url= window.URL.createObjectURL(res);
+      // const link= document.createElement('a');
+      // link.href= url;
+
+      // const contentDisposition = res.headers['content-disposition'];
+
+      // let filename = `download.${format}`;
+
+      // if (contentDisposition) {
+
+      //   const match = contentDisposition.match(/filename="(.+)"/);
+
+      //   if (match?.[1]) {
+      //     filename = match[1];
+      //   }
+      // }
+
+      // link.setAttribute("download", filename);
+
+      // document.body.appendChild(link);
+      // link.click();
+      // link.remove();
+
+      // window.URL.revokeObjectURL(url);
 
     }catch(err){
       console.log(err);
@@ -134,25 +178,3 @@ export default ResultPage;
 
 
 
-
-
-
-
-// import ResultDisplay from "../components/ResultDisplay"
-
-
-// const ResultPage = ({results, documentId, onReviewAndEdit, onAnotherDocProcess}) => {
-//   return (
-//     <div className="flex flex-col gap-2.5">
-//         {results && <ResultDisplay results={results}/>}
-//         <div className="flex flex-row gap-1 justify-between items-baseline">
-//             <button className="bg-amber-400 rounded-md p-2 m-1" onClick={onReviewAndEdit}>Review & Edit</button>
-//             <button className="bg-blue-400 rounded-md p-2 m-1">Export Direct</button>
-//             <button className="bg-red-300 rounded-md p-2 m-1" onClick={onAnotherDocProcess}>Process Another Doc</button>
-//         </div>
-        
-//     </div>
-//   )
-// }
-
-// export default ResultPage
