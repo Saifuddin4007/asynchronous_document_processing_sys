@@ -9,7 +9,6 @@ export const uploadDocument= async (file)=>{
     formData.append('file', file);
 
     const res= await api.post('/api/v1/documents/upload', formData);
-    console.log(res.data);
     return res.data;
 }
 
@@ -38,5 +37,5 @@ export const exportData= async (documentId, format)=>{
             responseType: 'blob'
         }
     );
-    return res.data;
+    return res;
 }
