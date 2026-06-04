@@ -10,7 +10,6 @@ export const worker = new Worker(
         const { document_id, original_filename, stored_filename, mime_type } = job.data;
 
         try {
-            console.log(`processing job ${job.id} for document ${document_id}`);
 
             //!Update progress
             await job.updateProgress(10);
@@ -127,7 +126,7 @@ export const worker = new Worker(
                     completed_at= $3,
                     progress_percent= $4
                 WHERE document_id= $5`,
-                    [jobStatus, err.message, isLastAttempt ? NOW() : null, isLastAttempt ? -1 : Number(job.progress) || 0, document_id]
+                    [jobStatus, err.message, isLastAttempt ? new Date() : null, isLastAttempt ? -1 : Number(job.progress) || 0, document_id]
                 );
 
                 await client.query('COMMIT');
