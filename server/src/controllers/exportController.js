@@ -24,12 +24,17 @@ export const exportDocument = async (req, res) => {
 
 
         const filename = rows[0].original_filename;
+        const basename= filename.replace(/\.[^/.]+$/, "");
         const extension = format === 'json' ? '.json' : '.txt';
         const contentType = format === 'json' ? 'application/json' : 'text/plain';
-        const exportFilename = `${filename}${extension}`;
+        const exportFilename = `${basename}${extension}`;
 
         res.setHeader('Content-Disposition', `attachment; filename="${exportFilename}"`);
         res.setHeader('Content-Type', contentType);
+        res.setHeader(
+            'Access-Control-Expose-Headers',
+            'Content-Disposition'
+        );
         res.status(200).send(exportRes);
 
 
