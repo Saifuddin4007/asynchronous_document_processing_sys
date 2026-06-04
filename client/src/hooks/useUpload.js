@@ -35,12 +35,12 @@ const useUpload = (onUploadComplete) => {
 
         const res = await uploadDocument(selectedFile);
 
-        setDocumentId(res.document_id);
+        setDocumentId(res.docId);
         setJobId(res.jobId);
 
         setUpload(false);
 
-        onUploadComplete(res.document_id);
+        onUploadComplete(res.docId);
 
        }catch(err){
         setError(err.message);
