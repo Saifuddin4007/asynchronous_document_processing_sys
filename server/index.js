@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './src/db/pool.js';
+import './src/workers/documentWorker.js';
 import {errorHandler} from './src/middlewares/errorHandler.js';
 import documentRoutes from './src/routes/documentRoutes.js';
 import jobRoutes from './src/routes/jobRoutes.js';
