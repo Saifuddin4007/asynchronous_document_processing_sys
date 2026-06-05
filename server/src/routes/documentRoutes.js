@@ -6,11 +6,11 @@ const router= express.Router();
 
 router.get('/health', checkHealth);
 
+router.post('/documents/upload', upload.single('file'), uploadDocument); //!UPLOAD DOCUMENT
+
 router.get('/documents', getAllDocuments);
 
 router.get('/documents/:id', getSingleDocument);
-
-router.post('/documents/upload', upload.single('file'), uploadDocument); //!UPLOAD DOCUMENT
 
 router.delete('/documents/:id', deleteOneDocument);
 
