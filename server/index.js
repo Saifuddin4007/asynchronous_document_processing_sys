@@ -30,10 +30,10 @@ app.use(cors({
 
 
 //!Routes
-app.use('/api/v1', documentRoutes);
-app.use('/api/v1', jobRoutes);
-app.use('/api/v1', resultRoutes);
-app.use('/api/v1', exportRoutes);
+app.use('/api/v1/documents', documentRoutes);
+app.use('/api/v1/jobs', jobRoutes);
+app.use('/api/v1/results', resultRoutes);
+app.use('/api/v1/export', exportRoutes);
 
 
 //!Always last
