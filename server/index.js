@@ -24,7 +24,6 @@ app.use(express.json());
 //!CORS
 app.use(cors({
     origin: 'https://asynchronous-document-processing-sy.vercel.app', // your React app's exact origin
-    credentials: true,               // required because axios has withCredentials: true
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 }));
 
