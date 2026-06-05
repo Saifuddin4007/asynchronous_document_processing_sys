@@ -6,12 +6,12 @@ const router= express.Router();
 
 router.get('/health', checkHealth);
 
-router.post('/documents/upload', upload.single('file'), uploadDocument); //!UPLOAD DOCUMENT
+router.post('/upload', upload.single('file'), uploadDocument); //!UPLOAD DOCUMENT
 
-router.get('/documents', getAllDocuments);
+router.get('/', getAllDocuments);
 
-router.get('/documents/:id', getSingleDocument);
+router.get('/:id', getSingleDocument);
 
-router.delete('/documents/:id', deleteOneDocument);
+router.delete('/:id', deleteOneDocument);
 
 export default router;

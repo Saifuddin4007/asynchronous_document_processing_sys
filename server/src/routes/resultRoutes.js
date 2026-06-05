@@ -3,9 +3,9 @@ import { getSingleResult, updateResult } from '../controllers/resultControllers.
 
 const router= express.Router();
 
-router.get('/results/:documentId', getSingleResult);
+router.get('/:documentId', getSingleResult);
 
-router.patch('/results/:documentId', updateResult);
+router.patch('/:documentId', updateResult);
 
 // router.post('/results/:id/finalize', finalizeResult); //Need in future, in phase-3
 

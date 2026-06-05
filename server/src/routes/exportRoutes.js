@@ -3,7 +3,7 @@ import { exportDocument } from '../controllers/exportController.js';
 
 const router= express.Router();
 
-router.get('/export/:documentId', exportDocument);
+router.get('/:documentId', exportDocument);
 
 
 
