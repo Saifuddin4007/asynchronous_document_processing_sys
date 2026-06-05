@@ -3,22 +3,29 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './src/db/pool.js';
 import './src/workers/documentWorker.js';
-import {errorHandler} from './src/middlewares/errorHandler.js';
+import { errorHandler } from './src/middlewares/errorHandler.js';
 import documentRoutes from './src/routes/documentRoutes.js';
 import jobRoutes from './src/routes/jobRoutes.js';
 import resultRoutes from './src/routes/resultRoutes.js';
 import exportRoutes from './src/routes/exportRoutes.js';
-const app= express();
+const app = express();
 
 
 dotenv.config();
 
 
 
-const PORT= process.env.PORT || 7001;
+const PORT = process.env.PORT || 7001;
 
 //!express-middleware
-app.use(express.json());
+app.use(express.json({
+    limit: '10mb'
+}));
+
+app.use(express.urlencoded({
+    extended: true,
+    limit: '10mb'
+}));
 
 
 //!CORS
@@ -38,6 +45,6 @@ app.use('/api/v1/export', exportRoutes);
 //!Always last
 app.use(errorHandler);
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log(`Server is started at PORT: ${PORT}`);
 })
